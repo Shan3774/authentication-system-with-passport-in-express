@@ -54,8 +54,8 @@ const logOut = (req, res, next) => {
   });
 };
 
-//session authentication middle wares
 
+//session authentication middle wares
 function checkAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
     next();

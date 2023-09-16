@@ -22,6 +22,8 @@ function initializePassport(passport, getUserByEmail, getUserById){
         }
     }   
     passport.use(new localStrategy({ usernameField: 'email'}, authenticateUser));
+    //NB: you need to specity passwordField to if the keyterm is different from password/passport
+    //so that these 2 filed of a username and password can be passed in order to the authenticateUser function
     passport.serializeUser((user, done) =>  done(null, user.id))
     passport.deserializeUser((id, done) => done(null , getUserById(id))) 
 
