@@ -3,15 +3,13 @@ if (process.env.NODE_ENV !== 'production'){
 }
 
 const express = require('express')
-const app = express();
-
-const authRouter = require('./routes/auth');
-
-
 const passport = require('passport')
 const flash = require('express-flash')
 const session   = require('express-session')
 const methodOverRide = require('method-override')
+const authRouter = require('./routes/auth');
+
+const app = express();
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
@@ -30,4 +28,4 @@ app.use(methodOverRide('_method'))
 
 app.use('/auth', authRouter);
 
-app.listen(3000)
+app.listen(3000, ()=>{console.log("server listening on port 3000")})
