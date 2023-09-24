@@ -1,8 +1,9 @@
 const passport = require('passport')
 const bcrypt = require('bcrypt')
+const mongoose = require('mongoose');
+const User = require('../schemas/auth')
 
-//importing data from dbHandler auth
-const { createUserDb, getUserByEmailDb, getUserByIdDb } = require('../dbHandler/auth') 
+mongoose.connect("mongodb://localhost/unisecEthiopia");
 
 const asyncHandler = fn => (req, res, next) =>
   Promise
@@ -22,11 +23,13 @@ const getRegister = (req, res) => {
 const register = asyncHandler(async (req, res) => {
   try {
     const { userName, email, password } = req.body
-    console.log(userName, password)
     const hashedPassword = await bcrypt.hash(password, 10);
-   
-    // res.status(200).json({success: true, data: await createUserDb(userName, email, hashedPassword)})
-    await createUserDb(userName, email, hashedPassword);    
+    const user = await User.create({
+      userName: userName,
+      email: email,
+      password : password
+    });
+
     res.redirect("/auth/login");
 
   } catch (e) {
@@ -54,8 +57,8 @@ const logOut = (req, res, next) => {
   });
 };
 
-//session authentication middle wares
 
+//session authentication middle wares
 function checkAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
     next();
@@ -75,7 +78,7 @@ function checkNotAuthenticated(req, res, next) {
 //data fetching middlewares for now -- to be linked to db
 const getUserByEmail = asyncHandler( async (email) => {
     try{
-        return await getUserByEmailDb(email)
+        return await User.findOne().where('email').equals(email);
     }
     catch(e){
         return e;
@@ -85,7 +88,7 @@ const getUserByEmail = asyncHandler( async (email) => {
 
 const getUserById = asyncHandler( async (id) => {
   try{
-      return await getUserByIdDb(id);
+      return await User.findOne().where('_id').equals(id);
   }
   catch(e){
       return e;
